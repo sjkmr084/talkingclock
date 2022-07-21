@@ -3,11 +3,11 @@ package com.sj.tc;
 import com.sj.tc.exception.BadDataError;
 import com.sj.tc.model.TalkingClock;
 import com.sj.tc.service.TalkingClockService;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 
 class TalkingClockApplicationTests {
 
@@ -37,6 +37,24 @@ class TalkingClockApplicationTests {
     TalkingClockService tcs = new TalkingClockService();
     TalkingClock tc = tcs.createTakingClock(timeData[0]);
     assertEquals(timeData[1], tc.getHumanReadableTime());
+
+  }
+
+  @ParameterizedTest
+  @ValueSource(strings = {"0:00,Midnight", "1:00,One o'clock", "2:00,Two o'clock", "13:00,One o'clock", "13:05,Five past one", "13:10,Ten past one", "13:25,Twenty five past one", "13:30,Half past one", "13:35,Twenty five to two", "13:55,Five to two"})
+  public void testTalkingClockServiceResponseForGivenTime(String time) {
+    String[] timeData = time.split(",");
+    TalkingClockService tcs = new TalkingClockService();
+    String tcr = tcs.process(timeData[0]);
+    assertEquals(timeData[1], tcr);
+
+  }
+
+  @Test
+  public void testTalkingClockServiceResponseForCurrentTime() {
+    TalkingClockService tcs = new TalkingClockService();
+    String tcr = tcs.process("");
+    assertNotNull(tcr);
 
   }
 
